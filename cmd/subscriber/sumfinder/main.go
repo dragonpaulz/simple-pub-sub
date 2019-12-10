@@ -1,14 +1,14 @@
-package publisher
+package sumfinder
 
 import (
-	"fmt"
+	_ "context"
 	_ "log"
 
 	_ "github.com/gomodule/redigo/redis"
 )
 
 func main() {
-	fmt.Printf("%v\n", 0)
+	// channel := "arcticwolf"
 	// redisAddress := "localhost:6060"
 
 	// ctx, cancel := context.WithCancel(context.Background())
@@ -20,4 +20,6 @@ func main() {
 	// }
 
 	// defer conn.Close()
+	// rconn := redis.PubSubConn{Conn: conn}
+	// rconn.Subscribe(channel)
 }
