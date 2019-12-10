@@ -5,10 +5,10 @@ COPY . .
 
 RUN go build -o publisher ./main.go
 
-CMD ["go/src/publisher"]
+CMD ["app/publisher"]
 
 FROM scratch
 
-COPY --from=builder /go/src/publisher /go/src/publisher
+COPY --from=builder /app/publisher /app/publisher
 
-ENTRYPOINT [ "/go/src/publisher" ]
+ENTRYPOINT [ "/app/publisher" ]

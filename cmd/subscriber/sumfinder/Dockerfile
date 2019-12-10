@@ -5,10 +5,10 @@ COPY . .
 
 RUN go build -o sumfinder ./main.go
 
-CMD ["go/src/sumfinder"]
+CMD ["app/sumfinder"]
 
 FROM scratch
 
-COPY --from=builder /go/src/sumfinder /go/src/sumfinder
+COPY --from=builder /app/sumfinder /app/sumfinder
 
-ENTRYPOINT [ "/go/src/sumfinder" ]
+ENTRYPOINT [ "/app/sumfinder" ]
