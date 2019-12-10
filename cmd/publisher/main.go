@@ -1,12 +1,14 @@
 package publisher
 
 import (
+	"fmt"
 	_ "log"
 
 	_ "github.com/gomodule/redigo/redis"
 )
 
 func main() {
+	fmt.Printf("%v\n", 0)
 	// redisAddress := "localhost:6060"
 
 	// ctx, cancel := context.WithCancel(context.Background())

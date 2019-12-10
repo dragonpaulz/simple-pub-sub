@@ -19,3 +19,5 @@ services:
       - publisher
   redis:
     image: "redis:alpine"
+    expose:
+      - 6379
