@@ -1,22 +1,5 @@
 version: '3'
 services:
-  publisher:
-    build: "cmd/publisher"
-    image: publisher
-    depends_on: 
-      - redis
-  sumfinder:
-    build: "cmd/subscriber/sumfinder"
-    image: sumfinder
-    depends_on: 
-      - redis
-      - publisher
-  medianfinder:
-    build: "cmd/subscriber/medianfinder"
-    image: medianfinder
-    depends_on:
-      - redis
-      - publisher
   redis:
     image: "redis:alpine"
     expose:
