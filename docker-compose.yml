@@ -10,5 +10,12 @@ services:
     image: sumfinder
     depends_on: 
       - redis
+      - publisher
+  medianfinder:
+    build: "cmd/subscriber/medianfinder"
+    image: medianfinder
+    depends_on:
+      - redis
+      - publisher
   redis:
     image: "redis:alpine"
