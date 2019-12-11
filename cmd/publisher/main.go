@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
+	"time"
 
 	"simple-pub-sub/cmd/internal/config"
 
@@ -31,9 +32,12 @@ func main() {
 
 	// done := make(chan error, 1)
 
-	num := rand.Int31()
+	for {
+		num := rand.Int31()
 
-	// conn.Do("PUBLISH", config.Queue.Channel, num)
-	conn.Do("PUBLISH", "test", num)
-	log.Printf("Wrote :%v to channel\n", num)
+		// conn.Do("PUBLISH", config.Queue.Channel, num)
+		conn.Do("PUBLISH", config.Queue.Channel, num)
+		log.Printf("Wrote :%v to channel\n", num)
+		time.Sleep(time.Second)
+	}
 }
