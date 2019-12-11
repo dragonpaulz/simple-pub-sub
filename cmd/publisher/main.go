@@ -20,9 +20,15 @@ func main() {
 	}
 
 	defer conn.Close()
+	// done := make(chan error, 1)
 
 	for {
 		num := rand.Int31()
+		sign := rand.Int31n(2)
+
+		if sign == 1 {
+			num *= -1
+		}
 
 		conn.Do("PUBLISH", channel, num)
 		log.Printf("Wrote :%v to channel\n", num)
