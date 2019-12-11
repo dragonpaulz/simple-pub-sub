@@ -11,8 +11,9 @@ import (
 
 // PubSubConfig describes the information for connecting to redis for pubsub
 type PubSubConfig struct {
-	Redis RedisConfig
-	Queue QueueConfig
+	Redis  RedisConfig
+	Queue  QueueConfig
+	Broker BrokerConfig
 }
 
 // RedisConfig contains the information to connect to redis
@@ -23,6 +24,11 @@ type RedisConfig struct {
 // QueueConfig contains the information once connected to redis
 type QueueConfig struct {
 	Channel string
+}
+
+// BrokerConfig contains configurations for the publishers and subscribers
+type BrokerConfig struct {
+	PerSecond, SumWindowSeconds, MedianWindowSeconds float64
 }
 
 // ReadConfig takes the JSON Configuration file that specifies how to connect to the channel
@@ -56,11 +62,11 @@ func (psc PubSubConfig) redisConnection() (redis.Conn, error) {
 }
 
 // RedisSubConn will return a connection for a subscriber of a channel
-func RedisSubConn() (redis.PubSubConn, error) {
+func RedisSubConn() (redis.PubSubConn, BrokerConfig, error) {
 	psc := ReadConfig()
 	conn, dErr := psc.redisConnection()
 	if dErr != nil {
-		return redis.PubSubConn{}, dErr
+		return redis.PubSubConn{}, BrokerConfig{}, dErr
 	}
 
 	rconn := redis.PubSubConn{Conn: conn}
@@ -70,15 +76,15 @@ func RedisSubConn() (redis.PubSubConn, error) {
 			sErr,
 		)
 
-		return redis.PubSubConn{}, sErr
+		return redis.PubSubConn{}, BrokerConfig{}, sErr
 	}
 
-	return rconn, nil
+	return rconn, psc.Broker, nil
 }
 
 // RedisPubConn will return a connection for a publisher of a channel
-func RedisPubConn() (redis.Conn, string, error) {
+func RedisPubConn() (redis.Conn, string, BrokerConfig, error) {
 	psc := ReadConfig()
 	conn, err := psc.redisConnection()
-	return conn, psc.Queue.Channel, err
+	return conn, psc.Queue.Channel, psc.Broker, err
 }
