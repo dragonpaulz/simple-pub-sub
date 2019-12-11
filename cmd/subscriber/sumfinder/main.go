@@ -5,13 +5,13 @@ import (
 	"log"
 
 	"simple-pub-sub/cmd/internal/config"
+	"simple-pub-sub/cmd/subscriber/internal/receive"
 
 	"github.com/gomodule/redigo/redis"
 )
 
 func main() {
 	channel := "test"
-	// redisAddress := "localhost:6060"
 	config := config.ReadConfig()
 	redisAddress := fmt.Sprintf("%s:%s", config.Redis.Host, config.Redis.Port)
 
@@ -34,30 +34,6 @@ func main() {
 
 	done := make(chan error, 1)
 
-	for {
-		switch n := rconn.Receive().(type) {
-		case error:
-			done <- n
-			return
-		case redis.Message:
-			fmt.Printf("%v\n", string(n.Data))
-			// if err := onMessage(n.Channel, n.Data); err != nil {
-			// 	done <- err
-			// 	return
-			// }
-			// case redis.Subscription:
-			// 	switch n.Count {
-			// 	case len(channels):
-			// 		// Notify application when all channels are subscribed.
-			// 		if err := onStart(); err != nil {
-			// 			done <- err
-			// 			return
-			// 		}
-			// 	case 0:
-			// 		// Return from the goroutine when all channels are unsubscribed.
-			// 		done <- nil
-			// 		return
-			// 	}
-		}
-	}
+	receive.Receive(done, rconn)
+
 }
