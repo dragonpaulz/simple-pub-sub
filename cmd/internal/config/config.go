@@ -44,12 +44,23 @@ func ReadConfig() PubSubConfig {
 }
 
 // RedisConnection opens a connection to a redis for PubSub
-func (psc PubSubConfig) RedisConnection() (redis.Conn, redis.PubSubConn, error) {
+func (psc PubSubConfig) redisConnection() (redis.Conn, error) {
 	redisAddress := fmt.Sprintf("%s:%s", psc.Redis.Host, psc.Redis.Port)
 	conn, dErr := redis.Dial("tcp", redisAddress)
 	if dErr != nil {
 		log.Printf("Error while dialing: %v\n", dErr)
-		return nil, redis.PubSubConn{}, dErr
+		return nil, dErr
+	}
+
+	return conn, nil
+}
+
+// RedisSubConn will return a connection for a subscriber of a channel
+func RedisSubConn() (redis.PubSubConn, error) {
+	psc := ReadConfig()
+	conn, dErr := psc.redisConnection()
+	if dErr != nil {
+		return redis.PubSubConn{}, dErr
 	}
 
 	rconn := redis.PubSubConn{Conn: conn}
@@ -59,8 +70,14 @@ func (psc PubSubConfig) RedisConnection() (redis.Conn, redis.PubSubConn, error) 
 			sErr,
 		)
 
-		return nil, redis.PubSubConn{}, sErr
+		return redis.PubSubConn{}, sErr
 	}
 
-	return conn, rconn, nil
+	return rconn, nil
+}
+
+// RedisPubConn will return a connection for a publisher of a channel
+func RedisPubConn() (redis.Conn, error) {
+	psc := ReadConfig()
+	return psc.redisConnection()
 }

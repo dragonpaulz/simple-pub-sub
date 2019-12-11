@@ -7,12 +7,12 @@ import (
 )
 
 func main() {
-	config := config.ReadConfig()
-
-	_, psc, cErr := config.RedisConnection()
+	psc, cErr := config.RedisSubConn()
 	if cErr != nil {
 		log.Printf("Error connecting to redis, %v\n", cErr)
 	}
+
+	defer psc.Conn.Close()
 
 	done := make(chan error, 1)
 
