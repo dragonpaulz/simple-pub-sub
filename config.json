@@ -5,5 +5,10 @@
     },
     "queue": {
       "channel": "arcticwolf"
+    },
+    "broker": {
+      "perSecond": 20,
+      "sumWindowSeconds": 5,
+      "medianWindowSeconds": 5
     }
   }

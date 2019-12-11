@@ -14,7 +14,7 @@ func main() {
 
 	log.Printf("context: %v, cancel: %v", ctx, cancel)
 
-	conn, channel, connErr := config.RedisPubConn()
+	conn, channel, conf, connErr := config.RedisPubConn()
 	if connErr != nil {
 		log.Fatalf("Cannot establish connection. Exiting.")
 	}
@@ -22,6 +22,7 @@ func main() {
 	defer conn.Close()
 	// done := make(chan error, 1)
 
+	sleepTime := time.Second / conf.PerSecond
 	for {
 		num := rand.Int31()
 		sign := rand.Int31n(2)
@@ -32,6 +33,6 @@ func main() {
 
 		conn.Do("PUBLISH", channel, num)
 		log.Printf("Wrote :%v to channel\n", num)
-		time.Sleep(time.Second)
+		time.Sleep(sleepTime)
 	}
 }
