@@ -77,7 +77,8 @@ func RedisSubConn() (redis.PubSubConn, error) {
 }
 
 // RedisPubConn will return a connection for a publisher of a channel
-func RedisPubConn() (redis.Conn, error) {
+func RedisPubConn() (redis.Conn, string, error) {
 	psc := ReadConfig()
-	return psc.redisConnection()
+	conn, err := psc.redisConnection()
+	return conn, psc.Queue.Channel, err
 }
