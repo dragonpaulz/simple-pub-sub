@@ -1,23 +1,31 @@
-package publisher
+package main
 
 import (
-	"fmt"
-	_ "log"
+	"context"
+	"log"
+	"math/rand"
+	"time"
 
-	_ "github.com/gomodule/redigo/redis"
+	"simple-pub-sub/cmd/internal/config"
 )
 
 func main() {
-	fmt.Printf("%v\n", 0)
-	// redisAddress := "localhost:6060"
+	ctx, cancel := context.WithCancel(context.Background())
 
-	// ctx, cancel := context.WithCancel(context.Background())
+	log.Printf("context: %v, cancel: %v", ctx, cancel)
 
-	// conn, err := redis.Dial("tcp", redisAddress)
-	// if err != nil {
-	// 	log.Printf("Error while dialing: %v\n", err)
-	// 	return
-	// }
+	conn, channel, connErr := config.RedisPubConn()
+	if connErr != nil {
+		log.Fatalf("Cannot establish connection. Exiting.")
+	}
 
-	// defer conn.Close()
+	defer conn.Close()
+
+	for {
+		num := rand.Int31()
+
+		conn.Do("PUBLISH", channel, num)
+		log.Printf("Wrote :%v to channel\n", num)
+		time.Sleep(time.Second)
+	}
 }

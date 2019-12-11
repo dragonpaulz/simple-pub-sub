@@ -1,0 +1,9 @@
+{
+    "redis": {
+      "port": "6379",
+      "host": "localhost"
+    },
+    "queue": {
+      "channel": "arcticwolf"
+    }
+  }

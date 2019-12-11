@@ -1,25 +1,20 @@
-package medianfinder
+package main
 
 import (
-	_ "context"
-	_ "log"
-
-	_ "github.com/gomodule/redigo/redis"
+	"log"
+	"simple-pub-sub/cmd/internal/config"
+	"simple-pub-sub/cmd/subscriber/internal/receive"
 )
 
 func main() {
-	// var channel := "arcticwolf"
-	// var redisAddress := "localhost:6060"
+	psc, cErr := config.RedisSubConn()
+	if cErr != nil {
+		log.Printf("Error connecting to redis, %v\n", cErr)
+	}
 
-	// ctx, cancel := context.WithCancel(ctx.Background())
+	defer psc.Conn.Close()
 
-	// conn, err := redis.Dial("tcp", redisAddress)
-	// if err != nil {
-	// 	log.Printf("Error while dialing: %v\n", err)
-	// 	return
-	// }
+	done := make(chan error, 1)
 
-	// defer conn.Close()
-	// rconn := redis.PubSubConn{Conn: conn}
-	// rconn.Subscribe(channel)
+	receive.Receive(done, psc)
 }
