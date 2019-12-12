@@ -16,7 +16,7 @@ func main() {
 
 	defer conn.Close()
 
-	sleepTime := time.Second / conf.PerSecond
+	sleepTime := time.Second / time.Duration(conf.PerSecond)
 	for {
 		num := rand.Int31()
 		sign := rand.Int31n(2)
