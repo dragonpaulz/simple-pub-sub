@@ -3,13 +3,14 @@ package main
 import (
 	"log"
 	"math/rand"
+	"os"
 	"time"
 
 	"simple-pub-sub/cmd/internal/config"
 )
 
 func main() {
-	conn, channel, conf, connErr := config.RedisPubConn()
+	conn, channel, conf, connErr := config.RedisPubConn(os.Args[1])
 	if connErr != nil {
 		log.Fatalf("Cannot establish connection. Exiting.")
 	}
