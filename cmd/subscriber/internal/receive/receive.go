@@ -10,7 +10,7 @@ import (
 // Receive will read from subscription queue
 func Receive(
 	done chan error,
-	newNum chan int64,
+	newNum chan int,
 	rconn redis.PubSubConn,
 ) {
 	for {
@@ -22,8 +22,11 @@ func Receive(
 		case redis.Subscription:
 			log.Printf("Successfully subscribed to %s\n", n.Channel)
 		case redis.Message:
-			val, _ := strconv.Atoi(string(n.Data))
-			newNum <- int64(val)
+			if val, err := strconv.Atoi(string(n.Data)); err == nil {
+				newNum <- val
+			} else {
+				log.Printf("Non integer value received, %v", n.Data)
+			}
 		}
 	}
 }

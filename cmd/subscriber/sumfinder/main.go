@@ -18,7 +18,7 @@ func main() {
 	defer psc.Conn.Close()
 
 	done := make(chan error, 1)
-	newNum := make(chan int64, 10)
+	newNum := make(chan int, 10)
 
 	var sum int64 = 0
 
@@ -31,7 +31,7 @@ func main() {
 		select {
 		case n := <-newNum:
 			fmt.Println("Received: ", n)
-			sum += n
+			sum += int64(n)
 		case t := <-ticker.C:
 			fmt.Println("Sum: ", sum, " at time ", t)
 			sum = 0
