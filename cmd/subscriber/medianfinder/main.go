@@ -31,11 +31,11 @@ func main() {
 			fmt.Println("Received: ", n)
 			waiting = append(waiting, n)
 		case t := <-ticker.C:
-			fmt.Println("Sum: ", sum, " at time ", t)
 			received := make([]int, len(waiting))
 			copy(received, waiting)
 			waiting = make([]int,0)
-			median.Find(received)
+			m := median.Find(received)
+			fmt.Println("Median ", m, " at time ", t)
 		}
 	}
 }
