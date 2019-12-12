@@ -12,7 +12,6 @@ func Receive(
 	done chan error,
 	newNum chan int64,
 	rconn redis.PubSubConn,
-	// onMessage func(redis.Message, chan int64),
 ) {
 	for {
 		switch n := rconn.Receive().(type) {
