@@ -6,7 +6,7 @@ I ran my application on Ubuntu 18.04 using:
 - Redis server v=4.0.9 sha=00000000:0 malloc=jemalloc-3.6.0 bits=64 build=9435c3c2879311f3
 
 ## To run
-To install redis on Ubuntu, run `sudo apt-get install redis-server` . The default port is `:6379` for redis, which is what's in `config.json` . Running `redis-cli` will open a connection to the redis instance, and can confirm that you're connecting to the correct port.
+To install redis on Ubuntu, run `sudo apt-get install redis-server`, and on a Mac, run `brew install redis` using Homebrew. The default port is `:6379` for redis, which is what's in `config.json` . Running `redis-cli` will open a connection to the redis instance, and can confirm that you're connecting to the correct port.
 
 Configurations are loaded at runtime for the applications, so any changes to config.json should be done before starting the services.
 
