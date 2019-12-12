@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 	"time"
 
 	"simple-pub-sub/cmd/internal/config"
@@ -10,7 +11,7 @@ import (
 )
 
 func main() {
-	psc, bc, cErr := config.RedisSubConn()
+	psc, bc, cErr := config.RedisSubConn(os.Args[1])
 	if cErr != nil {
 		log.Printf("Error connecting to redis, %v\n", cErr)
 	}

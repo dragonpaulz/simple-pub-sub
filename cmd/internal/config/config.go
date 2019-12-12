@@ -32,8 +32,8 @@ type BrokerConfig struct {
 }
 
 // ReadConfig takes the JSON Configuration file that specifies how to connect to the channel
-func ReadConfig() PubSubConfig {
-	data, readErr := ioutil.ReadFile("/home/paul/go/src/simple-pub-sub/config.json")
+func ReadConfig(configPath string) PubSubConfig {
+	data, readErr := ioutil.ReadFile(configPath)
 
 	if readErr != nil {
 		log.Printf("Error reading file: %v", readErr)
@@ -60,8 +60,8 @@ func (psc PubSubConfig) redisConnection() (redis.Conn, error) {
 }
 
 // RedisSubConn will return a connection for a subscriber of a channel
-func RedisSubConn() (redis.PubSubConn, BrokerConfig, error) {
-	psc := ReadConfig()
+func RedisSubConn(configPath string) (redis.PubSubConn, BrokerConfig, error) {
+	psc := ReadConfig(configPath)
 	conn, dErr := psc.redisConnection()
 	if dErr != nil {
 		return redis.PubSubConn{}, BrokerConfig{}, dErr
@@ -81,8 +81,8 @@ func RedisSubConn() (redis.PubSubConn, BrokerConfig, error) {
 }
 
 // RedisPubConn will return a connection for a publisher of a channel
-func RedisPubConn() (redis.Conn, string, BrokerConfig, error) {
-	psc := ReadConfig()
+func RedisPubConn(configPath string) (redis.Conn, string, BrokerConfig, error) {
+	psc := ReadConfig(configPath)
 	conn, err := psc.redisConnection()
 	return conn, psc.Queue.Channel, psc.Broker, err
 }
