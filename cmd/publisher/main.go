@@ -18,7 +18,7 @@ func main() {
 
 	sleepTime := time.Second / time.Duration(conf.PerSecond)
 	for {
-		num := rand.Int31()
+		num := rand.Int31n(10)
 		sign := rand.Int31n(2)
 
 		if sign == 1 {
