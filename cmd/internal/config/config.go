@@ -39,8 +39,6 @@ func ReadConfig() PubSubConfig {
 		log.Printf("Error reading file: %v", readErr)
 	}
 
-	log.Println(data)
-
 	var config PubSubConfig
 	err := json.Unmarshal(data, &config)
 	if err != nil {
