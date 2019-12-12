@@ -23,9 +23,7 @@ func Receive(
 		case redis.Subscription:
 			fmt.Printf("Successfully subscribed to %s\n", n.Channel)
 		case redis.Message:
-			onMessage(n, newInt)
-			// fmt.Printf("%v\n", redis.(n.Data))
-			// write out
+			go onMessage(n, newInt)
 		}
 	}
 }
