@@ -7,11 +7,16 @@ import (
 	"github.com/gomodule/redigo/redis"
 )
 
+// Receiver is an attempt to make the code testable.
+type Receiver interface {
+	Receive() interface{}
+}
+
 // Receive will read from subscription queue
 func Receive(
 	done chan error,
 	newNum chan int,
-	rconn redis.PubSubConn,
+	rconn Receiver,
 ) {
 	for {
 		switch n := rconn.Receive().(type) {
