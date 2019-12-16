@@ -13,14 +13,14 @@ import (
 type testReceiver struct {
 	queuedError error
 	queuedNum   []int64
-	NumChan     chan int64
+	NumChan     chan int
 	DoneChan    chan error
 }
 
 func Init(numSent int) testReceiver {
 	return testReceiver{
 		queuedNum:   make([]int64, 0),
-		NumChan:     make(chan int64, numSent),
+		NumChan:     make(chan int, numSent),
 		DoneChan:    make(chan error),
 		queuedError: nil,
 	}
