@@ -46,6 +46,8 @@ func (t testReceiver) AddNumChan(nums ...int64) {
 }
 
 func TestReceiver_ReturnsNumbers_NumbersOnChannel(t *testing.T) {
+	timeout := time.After(time.Second)
+
 	fmt.Println("Starting test")
 	tr := Init(3)
 	fmt.Println("Done init")
@@ -64,7 +66,10 @@ func TestReceiver_ReturnsNumbers_NumbersOnChannel(t *testing.T) {
 		case n := <-tr.NumChan:
 			received[i] = n
 			fmt.Println("Received ", n)
+		case <-timeout:
+			t.Fatal("Test timed out")
 		}
+
 	}
 
 	rec1, ok1 := received[0].(int64)
