@@ -12,3 +12,6 @@ medianfinder:
 
 sumfinder:
 	go run cmd/subscriber/sumfinder/main.go ./config.json
+
+test:
+	go test ./...
