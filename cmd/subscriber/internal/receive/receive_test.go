@@ -2,85 +2,45 @@ package receive_test
 
 import (
 	"fmt"
-	"simple-pub-sub/cmd/subscriber/internal/receive"
+	"strconv"
 	"testing"
 	"time"
 
+	"simple-pub-sub/cmd/subscriber/internal/receive"
+
+	"github.com/gomodule/redigo/redis"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/mock"
 )
 
-type testReceiver struct {
-	queuedError error
-	queuedNum   []int64
-	NumChan     chan int
-	DoneChan    chan error
+type mockReceiver struct {
+	mock.Mock
 }
 
-func Init(numSent int) testReceiver {
-	return testReceiver{
-		queuedNum:   make([]int64, 0),
-		NumChan:     make(chan int, numSent),
-		DoneChan:    make(chan error),
-		queuedError: nil,
-	}
+func (m *mockReceiver) Receive() interface{} {
+	args := m.Called()
+	return args.Get(0)
 }
 
-func (t testReceiver) Receive() interface{} {
-	if len(t.queuedNum) > 0 {
-		nextNum := t.queuedNum[0]
-		t.queuedNum = t.queuedNum[1:]
-		return nextNum
-	} else if len(t.DoneChan) > 0 {
-		err := t.queuedError
-		t.queuedError = nil
-		return err
-	} else {
-		time.Sleep(time.Millisecond)
-		return nil
-	}
-}
+func TestReceive_mockReceiver(t *testing.T) {
+	timeout := time.After(100 * time.Millisecond)
+	testobj := new(mockReceiver)
 
-func (t testReceiver) AddNumChan(nums ...int64) {
-	t.queuedNum = append(t.queuedNum, nums...)
-}
+	testobj.On("Receive").Return(redis.Message{Data: []byte(strconv.Itoa(1))})
+	NumChan := make(chan int)
+	DoneChan := make(chan error)
 
-func TestReceiver_ReturnsNumbers_NumbersOnChannel(t *testing.T) {
-	timeout := time.After(time.Second)
+	go receive.Receive(DoneChan, NumChan, testobj)
 
-	fmt.Println("Starting test")
-	tr := Init(3)
-	fmt.Println("Done init")
-	received := make([]interface{}, 3)
-	msg1 := int64(1)
-	msg2 := int64(2)
-	msg3 := int64(3)
-	fmt.Println("About to call Receive")
-	go receive.Receive(tr.DoneChan, tr.NumChan, tr)
-	go tr.AddNumChan(msg1, msg2, msg3)
+	var received int
 
-	fmt.Println("Done with go calls")
-
-	for i := 0; i < 2; i++ {
-		select {
-		case n := <-tr.NumChan:
-			received[i] = n
-			fmt.Println("Received ", n)
-		case <-timeout:
-			t.Fatal("Test timed out")
-		}
-
+	select {
+	case n := <-NumChan:
+		received = n
+		fmt.Println("Received ", n)
+	case <-timeout:
+		t.Fatal("Test timed out")
 	}
 
-	rec1, ok1 := received[0].(int64)
-	rec2, ok2 := received[1].(int64)
-	rec3, ok3 := received[2].(int64)
-
-	require.True(t, ok1)
-	require.True(t, ok2)
-	require.True(t, ok3)
-
-	assert.Equal(t, msg1, rec1)
-	assert.Equal(t, msg2, rec2)
-	assert.Equal(t, msg3, rec3)
+	assert.Equal(t, 1, received)
 }
